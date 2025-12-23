@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .products-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .products-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .product-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .product-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .product-price {
+            color: #667eea;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            min-height: 40px;
+        }
+
+        .add-to-cart-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .add-to-cart-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .add-to-cart-btn:active {
+            transform: scale(0.98);
+        }
+
+        .cart-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .cart-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-count {
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+        }
+
+        .cart-items {
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+
+        .cart-empty {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        .cart-total {
+            border-top: 2px solid #e0e0e0;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .cart-total-final {
+            font-weight: bold;
+            font-size: 1.3em;
+            color: #667eea;
+            border-top: 2px solid #667eea;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .checkout-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .checkout-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 1000;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .success-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .success-message h2 {
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .success-message p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .order-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .order-details h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .order-details p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .close-success-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .close-success-btn:hover {
+            background: #764ba2;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* Login Modal */
+        .login-modal {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-modal.hidden {
+            display: none;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            animation: loginSlideIn 0.3s ease-out;
+        }
+
+        @keyframes loginSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-box h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+            text-align: center;
+        }
+
+        .login-box p {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .login-form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .login-form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-hint {
+            text-align: center;
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        .main-app {
+            display: none;
+        }
+
+        .main-app.show {
+            display: block;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-section {
+                position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-box">
+            <h2>🔐 เข้าสู่ระบบ</h2>
+            <p>กรุณาเข้าสู่ระบบเพื่อเข้าใช้งาน</p>
+            <form id="loginForm" onsubmit="return handleLogin(event)">
+                <div class="login-form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" name="username" placeholder="กรอก username" required>
+                </div>
+                <div class="login-form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" placeholder="กรอก password" required>
+                </div>
+                <button type="submit" class="login-btn" id="login-btn">เข้าสู่ระบบ</button>
+                <p class="login-hint">💡 Username: admin / Password: 1234</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="main-app" id="mainApp">
+        <div class="container">
+            <header>
+                <h1>🛒 Shopping Cart Demo</h1>
+                <p>ระบบสั่งซื้อสินค้าตัวอย่างสำหรับทดสอบ Robot Framework</p>
+            <a href="index.html" class="back-link">← กลับไปหน้าบทเรียน</a>
+        </header>
+
+        <div class="main-content">
+            <div class="products-section">
+                <h2>📱 สินค้าทั้งหมด</h2>
+                <div class="products-grid" id="products-grid">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+
+            <div class="cart-section">
+                <h2>
+                    ตะกร้าสินค้า
+                    <span class="cart-count" id="cart-count">0</span>
+                </h2>
+
+                <div class="cart-items" id="cart-items">
+                    <div class="cart-empty">ตะกร้าสินค้าว่างเปล่า</div>
+                </div>
+
+                <div class="cart-total" id="cart-total" style="display: none;">
+                    <div class="cart-total-row">
+                        <span>ยอดรวม:</span>
+                        <span id="subtotal">฿0</span>
+                    </div>
+                    <div class="cart-total-row">
+                        <span>ค่าจัดส่ง:</span>
+                        <span id="shipping">฿100</span>
+                    </div>
+                    <div class="cart-total-row cart-total-final">
+                        <span>ยอดรวมทั้งหมด:</span>
+                        <span id="total">฿0</span>
+                    </div>
+                </div>
+
+                <div class="checkout-section" id="checkout-section" style="display: none;">
+                    <h3>ข้อมูลการจัดส่ง</h3>
+                    <form id="checkout-form">
+                        <div class="form-group">
+                            <label for="customer-name">ชื่อ-นามสกุล *</label>
+                            <input type="text" id="customer-name" name="customer-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-email">อีเมล *</label>
+                            <input type="email" id="customer-email" name="customer-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-phone">เบอร์โทรศัพท์ *</label>
+                            <input type="tel" id="customer-phone" name="customer-phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-address">ที่อยู่จัดส่ง *</label>
+                            <textarea id="customer-address" name="customer-address" required></textarea>
+                        </div>
+                        <button type="submit" class="checkout-btn" id="checkout-btn">
+                            ยืนยันการสั่งซื้อ
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="success-message" id="success-message">
+        <div class="success-icon">✅</div>
+        <h2>สั่งซื้อสำเร็จ!</h2>
+        <p>ขอบคุณที่ใช้บริการ</p>
+        <div class="order-details" id="order-details">
+            <!-- Order details will be shown here -->
+        </div>
+        <button class="close-success-btn" onclick="closeSuccessMessage()">ปิด</button>
+    </div>
+    </div> <!-- End .container -->
+    </div> <!-- End .main-app -->
+
+    <script>
+        // Login handler
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            // Simple validation (for demo purposes)
+            if (username === 'admin' && password === '1234') {
+                document.getElementById('loginModal').classList.add('hidden');
+                document.getElementById('mainApp').classList.add('show');
+                return false;
+            } else {
+                alert('Username หรือ Password ไม่ถูกต้อง!\n\n💡 Username: admin / Password: 1234');
+                return false;
+            }
+        }
+
+        // Product data
+        const products = [
+            {
+                id: 1,
+                name: 'iPhone 14 Pro',
+                price: 42900,
+                icon: '📱',
+                description: 'สมาร์ทโฟนรุ่นล่าสุดจาก Apple'
+            },
+            {
+                id: 2,
+                name: 'MacBook Pro',
+                price: 89900,
+                icon: '💻',
+                description: 'แล็ปท็อปสำหรับมืออาชีพ'
+            },
+            {
+                id: 3,
+                name: 'iPad Air',
+                price: 24900,
+                icon: '📱',
+                description: 'แท็บเล็ตที่เหมาะกับทุกการใช้งาน'
+            },
+            {
+                id: 4,
+                name: 'Apple Watch',
+                price: 14900,
+                icon: '⌚',
+                description: 'สมาร์ทวอทช์เพื่อสุขภาพ'
+            },
+            {
+                id: 5,
+                name: 'AirPods Pro',
+                price: 8900,
+                icon: '🎧',
+                description: 'หูฟังไร้สายตัดเสียงรบกวน'
+            },
+            {
+                id: 6,
+                name: 'Magic Mouse',
+                price: 3900,
+                icon: '🖱️',
+                description: 'เมาส์ไร้สายดีไซน์สวยงาม'
+            }
+        ];
+
+        let cart = [];
+
+        // Load products
+        function loadProducts() {
+            const productsGrid = document.getElementById('products-grid');
+            productsGrid.innerHTML = products.map(product => `
+                <div class="product-card" data-product-id="${product.id}">
+                    <div class="product-icon">${product.icon}</div>
+                    <h3>${product.name}</h3>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-price">฿${product.price.toLocaleString()}</div>
+                    <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
+                        เพิ่มลงตะกร้า
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Add to cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                cart.push({...product});
+                updateCart();
+            }
+        }
+
+        // Remove from cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        // Update cart display
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const cartCount = document.getElementById('cart-count');
+            const cartTotal = document.getElementById('cart-total');
+            const checkoutSection = document.getElementById('checkout-section');
+
+            cartCount.textContent = cart.length;
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="cart-empty">ตะกร้าสินค้าว่างเปล่า</div>';
+                cartTotal.style.display = 'none';
+                checkoutSection.style.display = 'none';
+            } else {
+                cartItems.innerHTML = cart.map((item, index) => `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.icon} ${item.name}</div>
+                            <div class="cart-item-price">฿${item.price.toLocaleString()}</div>
+                        </div>
+                        <button class="remove-btn" onclick="removeFromCart(${index})">ลบ</button>
+                    </div>
+                `).join('');
+
+                const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+                const shipping = 100;
+                const total = subtotal + shipping;
+
+                document.getElementById('subtotal').textContent = `฿${subtotal.toLocaleString()}`;
+                document.getElementById('shipping').textContent = `฿${shipping.toLocaleString()}`;
+                document.getElementById('total').textContent = `฿${total.toLocaleString()}`;
+
+                cartTotal.style.display = 'block';
+                checkoutSection.style.display = 'block';
+            }
+        }
+
+        // Handle checkout
+        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('customer-name').value;
+            const email = document.getElementById('customer-email').value;
+            const phone = document.getElementById('customer-phone').value;
+            const address = document.getElementById('customer-address').value;
+
+            const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+            const shipping = 100;
+            const total = subtotal + shipping;
+
+            const orderDetails = document.getElementById('order-details');
+            orderDetails.innerHTML = `
+                <h3>รายละเอียดคำสั่งซื้อ</h3>
+                <p><strong>ชื่อ:</strong> ${name}</p>
+                <p><strong>อีเมล:</strong> ${email}</p>
+                <p><strong>เบอร์โทร:</strong> ${phone}</p>
+                <p><strong>ที่อยู่:</strong> ${address}</p>
+                <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
+                <p><strong>สินค้า:</strong> ${cart.length} รายการ</p>
+                <p><strong>ยอดรวม:</strong> ฿${total.toLocaleString()}</p>
+            `;
+
+            document.getElementById('overlay').classList.add('show');
+            document.getElementById('success-message').classList.add('show');
+
+            // Reset form and cart
+            setTimeout(() => {
+                cart = [];
+                updateCart();
+                document.getElementById('checkout-form').reset();
+            }, 500);
+        });
+
+        // Close success message
+        function closeSuccessMessage() {
+            document.getElementById('overlay').classList.remove('show');
+            document.getElementById('success-message').classList.remove('show');
+        }
+
+        // Close on overlay click
+        document.getElementById('overlay').addEventListener('click', closeSuccessMessage);
+
+        // Initialize
+        loadProducts();
+        updateCart();
+    </script>
+</body>
+</html>
